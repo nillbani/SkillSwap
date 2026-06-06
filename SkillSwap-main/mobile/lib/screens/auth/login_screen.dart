@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../providers/auth_provider.dart';
 import '../../widgets/custom_text_field.dart';
 import '../../widgets/custom_button.dart';
 import 'register_screen.dart';
@@ -6,7 +8,7 @@ import '../home/main_screen.dart';
 import '../../config/theme.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({Key? key}) : super(key: key);
+  const LoginScreen({super.key});
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -16,21 +18,30 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  bool _isLoading = false;
 
   void _handleLogin() async {
     if (_formKey.currentState!.validate()) {
-      setState(() => _isLoading = true);
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
       
-      // Simulate API call
-      await Future.delayed(const Duration(seconds: 2));
+      final success = await authProvider.login(
+        _emailController.text.trim(),
+        _passwordController.text,
+      );
       
-      setState(() => _isLoading = false);
       if (mounted) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const MainScreen()),
-        );
+        if (success) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const MainScreen()),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(authProvider.error),
+              backgroundColor: AppTheme.errorColor,
+            ),
+          );
+        }
       }
     }
   }
@@ -114,10 +125,12 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
                 const SizedBox(height: 24),
-                CustomButton(
-                  text: 'Masuk',
-                  isLoading: _isLoading,
-                  onPressed: _handleLogin,
+                Consumer<AuthProvider>(
+                  builder: (context, auth, _) => CustomButton(
+                    text: 'Masuk',
+                    isLoading: auth.isLoading,
+                    onPressed: _handleLogin,
+                  ),
                 ),
                 const SizedBox(height: 24),
                 Row(

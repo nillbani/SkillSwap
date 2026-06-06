@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../providers/auth_provider.dart';
+import '../auth/login_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({Key? key}) : super(key: key);
+  const ProfileScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final user = context.watch<AuthProvider>().user;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Profil Saya'),
@@ -24,13 +29,14 @@ class ProfileScreen extends StatelessWidget {
                 children: [
                   CircleAvatar(
                     radius: 50,
-                    backgroundColor: Theme.of(
-                      context,
-                    ).primaryColor.withOpacity(0.2),
-                    child: Icon(
-                      Icons.person,
-                      size: 50,
-                      color: Theme.of(context).primaryColor,
+                    backgroundColor: Theme.of(context).primaryColor.withOpacity(0.2),
+                    child: Text(
+                      user?['username']?.toString().substring(0, 1).toUpperCase() ?? 'U',
+                      style: TextStyle(
+                        fontSize: 40,
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).primaryColor,
+                      ),
                     ),
                   ),
                   Positioned(
@@ -48,11 +54,7 @@ class ProfileScreen extends StatelessWidget {
                           color: Theme.of(context).primaryColor,
                           shape: BoxShape.circle,
                         ),
-                        child: const Icon(
-                          Icons.edit,
-                          size: 16,
-                          color: Colors.white,
-                        ),
+                        child: const Icon(Icons.edit, size: 16, color: Colors.white),
                       ),
                     ),
                   ),
@@ -60,14 +62,14 @@ class ProfileScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-            const Text(
-              'User',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            Text(
+              user?['full_name'] ?? user?['username'] ?? 'User',
+              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 4),
-            const Text(
-              'user@example.com',
-              style: TextStyle(color: Colors.grey),
+            Text(
+              user?['email'] ?? 'email@example.com',
+              style: const TextStyle(color: Colors.grey),
             ),
             const SizedBox(height: 24),
             _buildStatRow(),
@@ -96,8 +98,15 @@ class ProfileScreen extends StatelessWidget {
               icon: Icons.logout,
               title: 'Keluar',
               textColor: Colors.red,
-              onTap: () {
-                // Logout Logic Go Here
+              onTap: () async {
+                await context.read<AuthProvider>().logout();
+                if (context.mounted) {
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (context) => const LoginScreen()),
+                    (route) => false,
+                  );
+                }
               },
             ),
           ],
@@ -135,7 +144,10 @@ class ProfileScreen extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 4),
-        Text(label, style: const TextStyle(color: Colors.grey, fontSize: 13)),
+        Text(
+          label,
+          style: const TextStyle(color: Colors.grey, fontSize: 13),
+        ),
       ],
     );
   }
@@ -158,7 +170,10 @@ class ProfileScreen extends StatelessWidget {
       ),
       title: Text(
         title,
-        style: TextStyle(fontWeight: FontWeight.w600, color: textColor),
+        style: TextStyle(
+          fontWeight: FontWeight.w600,
+          color: textColor,
+        ),
       ),
       trailing: const Icon(Icons.chevron_right),
       onTap: onTap,
