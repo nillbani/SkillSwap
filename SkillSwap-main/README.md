@@ -110,4 +110,4 @@ Gunakan akun berikut untuk mencoba fitur yang sudah terintegrasi:
 Aplikasi ini dirancang dengan arsitektur modular sehingga mudah untuk ditambahkan fitur baru di masa depan seperti *Push Notifications* atau *Video Call* di dalam chat.
 
 ---
-*Dokumen ini dibuat otomatis oleh Antigravity AI Assistant untuk penyerahan proyek SkillSwap.*
+
