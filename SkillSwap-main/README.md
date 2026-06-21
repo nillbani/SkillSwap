@@ -97,12 +97,12 @@ Proyek ini sudah dilengkapi dengan `Dockerfile`.
 Gunakan akun berikut untuk mencoba fitur yang sudah terintegrasi:
 
 **Admin Dashboard:**
-- Email: `admin@skillswap.id`
+- Email: `admin@skillswap.com`
 - Password: `password`
 
 **User Mobile (Dummy):**
-- Email: `dzaky@skillswap.id`
-- Password: `password`
+- Email: `rabbaniaunill@gmail.com`
+- Password: `12345678`
 
 ---
 
